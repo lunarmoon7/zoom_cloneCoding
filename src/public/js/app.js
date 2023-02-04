@@ -3,9 +3,12 @@ const socket = io();
 const welcome = document.getElementById("welcome");
 const form = welcome.querySelector("form");
 const room = document.getElementById("room");
-
+const init = document.getElementById("init");
+const nickform = init.querySelector("form");
 
 room.hidden = true;
+welcome.hidden = true;
+
 let roomName;
 
 const addMessage = (message) => {
@@ -25,11 +28,17 @@ const handleMessageSubmit = (event) => {
   input.value = "";
 };
 
+const showWelcome = () => {
+  init.hidden = true;
+  welcome.hidden = false;
+}
 const handleNicknameSubmit = (event) => {
+    init.hidden = true;
+    welcome.hidden = false;
     event.preventDefault();
-    const input = choose.querySelector("#name input");
+    const input = init.querySelector("#name input");
     const value = input.value;
-    socket.emit("nickname", input.value);
+    socket.emit("nickname", input.value, showWelcome);
 }
 
 const showRoom = () => {
@@ -38,9 +47,7 @@ const showRoom = () => {
   const h3 = room.querySelector("h3");
   h3.innerText = `Room ${roomName}`;
   const msgForm = room.querySelector("#msg");
-  const nameForm = room.querySelector("#name");
   msgForm.addEventListener("submit", handleMessageSubmit);
-  nameForm.addEventListener("submit", handleNicknameSubmit);
 };
 
 const handleRoomSubmit = (event) => {
@@ -51,6 +58,7 @@ const handleRoomSubmit = (event) => {
   input.value = "";
 };
 
+nickform.addEventListener("submit", handleNicknameSubmit);
 form.addEventListener("submit", handleRoomSubmit);
 
 socket.on("welcome", (user) => {
